@@ -16,6 +16,7 @@ namespace CisLab5
 {
     public partial class Form1 : Form
     {
+        public const int sleep = 5000;
         string[] hostNames = { "www.microsoft.com",
             "www.apple.com", "www.google.com",
             "www.ibm.com", "cisco.netacad.net",
@@ -34,6 +35,7 @@ namespace CisLab5
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //wypisanie do texboxa hostName'ów by pokazać że kod zadziała
             string text = "";
             foreach (var t in hostNames)
             {
@@ -42,18 +44,18 @@ namespace CisLab5
             }
             textBox9.Text = text;
         }
-
+        //do testowania, czy nie zablokuje okna jakiś wątek
         private void random_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
             textBox8.Text = rnd.Next().ToString();
         }
-        // zadanie1.a task
+        // zadanie1.a użycie task
         private void tasks_Click(object sender, EventArgs e)
         {
             int n = Int32.Parse(textBox1.Text);
             int k = Int32.Parse(textBox2.Text);
-
+            // osobny task, by nie zakłócać głównego wątku
             Task mainTask = Task.Run(
                 () =>
                 {
@@ -100,7 +102,7 @@ namespace CisLab5
                     );                    
                     finalTask.Wait();
 
-                    Thread.Sleep(10000);
+                    Thread.Sleep(sleep);
                     if (textBox3.InvokeRequired)
                     {
                         textBox3.BeginInvoke((Action)(() => textBox3.Text = finalTask.Result.ToString()));
@@ -143,13 +145,15 @@ namespace CisLab5
 
         private double MethodAsync(int n, int k)
         {
+            //kod nie czeka na zakończenie delegata, idzie dalej
             MethodAsyncIntDelegat a = new MethodAsyncIntDelegat(methodA);
             IAsyncResult metA = a.BeginInvoke(n, k, null, null);
             MethodAsyncIntDelegat b = new MethodAsyncIntDelegat(methodB);
             IAsyncResult metB = b.BeginInvoke(n, k, null, null);
 
-            Thread.Sleep(10000);
+            Thread.Sleep(sleep);
 
+            //kod czeka na wyniki delegatów
             int resultA = a.EndInvoke(metA);
             int resultB = b.EndInvoke(metB);
 
@@ -171,11 +175,9 @@ namespace CisLab5
 
             MethodAsyncDelegat d = new MethodAsyncDelegat(MethodAsync);
             IAsyncResult rezult = d.BeginInvoke(n, k, null, null);
-            //double result = d.EndInvoke(rezult);
-            //textBox4.Text = result.ToString();
-
+            
         }
-        // zadanie1.c async
+        // zadanie1.c metody async - await, kod nie czeka na koniec metody tylko idzie dalej
         async Task<int> taskA(int n, int k)
         {
             int licznik = 1;
@@ -207,7 +209,7 @@ namespace CisLab5
             int licznik = await taskA(n, k);
             int mianownik= await taskB(n, k);
 
-            await Task.Delay(10000);
+            await Task.Delay(sleep);
             await Task.Run(() => Thread.Sleep(3000));
 
             wynik = licznik / mianownik;
@@ -236,20 +238,22 @@ namespace CisLab5
         
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {            
+            //pobranie liczby z textboxa
             int totalSteps = (int)e.Argument;
             long a = 0, b = 1;
-
+            //fibonacci 
             for (int j = 1; j <= totalSteps; j++)
             {              
                 b += a; //pod zmienną b przypisujemy wyraz następny czyli a+b
                 a = b - a; //pod zmienną a przypisujemy wartość zmiennej b
                 Thread.Sleep(100);
+                //wysłanie info do metody, a ona zaktualizuje progressbar
                 (sender as BackgroundWorker).ReportProgress((int)(100 / totalSteps) * j, null);                
             }
-
+            //wynik obliczeń
             e.Result = a;
         }
-
+        
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
@@ -280,14 +284,53 @@ namespace CisLab5
 
                             }
                         }
-                        FileInfo info = new FileInfo(directorySelected.Parent.ToString() + "\\" + fileToCompress.Name + ".gz");
+                        FileInfo info = new FileInfo(directorySelected.Parent.ToString() + "\\" + fileToCompress.Name + ".gz");                       
                         //Console.WriteLine("Compressed {0} from {1} to {2} bytes.",
                         //fileToCompress.Name, fileToCompress.Length.ToString(), info.Length.ToString());
                     }
 
                 }
-            }
-            );
+            });
+            //usunięcie zkompresowanych plików
+            directorySelected.GetFiles().AsParallel()
+                .Where(file => file.Extension != ".gz")
+                .ForAll(                
+            fileToCompress =>
+            {
+                fileToCompress.Delete();
+            });
+        }
+
+        public static void Decompress(DirectoryInfo directorySelected)
+        {
+            directorySelected.GetFiles().AsParallel()
+                .Where(file => file.Extension.Equals(".gz"))
+                .ForAll(
+             fileToDecompress =>
+             {
+                 using (FileStream originalFileStream = fileToDecompress.OpenRead())
+                 {
+                     string currentFileName = fileToDecompress.FullName;
+                     string newFileName = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
+
+                     using (FileStream decompressedFileStream = File.Create(newFileName))
+                     {
+                         using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                         {
+                             decompressionStream.CopyTo(decompressedFileStream);
+                             Console.WriteLine("Decompressed: {0}", fileToDecompress.Name);
+                         }
+                     }
+                 }                 
+             });
+            //usunięcie zdekompresowanych archiwów
+            directorySelected.GetFiles().AsParallel()
+                .Where(file => file.Extension.Equals(".gz"))
+                .ForAll(
+             fileToDecompress =>
+             {
+                 fileToDecompress.Delete();
+             });
         }
 
         public static void Decompress(FileInfo fileToDecompress)
@@ -342,7 +385,8 @@ namespace CisLab5
             // OK button was pressed.
             if (result == DialogResult.OK)
             {
-
+                DirectoryInfo directorySelected = new DirectoryInfo(folderBrowserDialog.SelectedPath);
+                Decompress(directorySelected);
 
             }
             // Cancel button was pressed.
@@ -356,7 +400,7 @@ namespace CisLab5
         {
             textBox9.Text = "";
             var d = hostNames.AsParallel()
-                .Select(host => new { Name = host, Ip = Dns.GetHostAddresses(host) })
+                .Select(host => new { Name = host, Ip = Dns.GetHostAddresses(host) }) //funkcja pobiera tablicę ip
                 .Select(host => new { name = host.Name + " => " + host.Ip.First().ToString() });
                 //.ForAll(host => textBox9.Text += (host.Name + " => " + host.Ip.First().ToString() + "\n"));
                 //.ForAll(host => Console.WriteLine(host.Name + " => " + host.Ip.First().ToString()));
