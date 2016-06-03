@@ -46,10 +46,10 @@
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.decompress = new System.Windows.Forms.Button();
+            this.compress = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button7 = new System.Windows.Forms.Button();
+            this.resolve = new System.Windows.Forms.Button();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.random = new System.Windows.Forms.Button();
@@ -115,6 +115,7 @@
             // 
             this.textBox5.Location = new System.Drawing.Point(94, 120);
             this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(100, 20);
             this.textBox5.TabIndex = 6;
             // 
@@ -122,6 +123,7 @@
             // 
             this.textBox4.Location = new System.Drawing.Point(94, 94);
             this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(100, 20);
             this.textBox4.TabIndex = 5;
             // 
@@ -130,6 +132,7 @@
             this.textBox3.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.textBox3.Location = new System.Drawing.Point(94, 68);
             this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 4;
             // 
@@ -192,7 +195,7 @@
             // 
             this.fibonacci.Location = new System.Drawing.Point(7, 50);
             this.fibonacci.Name = "fibonacci";
-            this.fibonacci.Size = new System.Drawing.Size(66, 31);
+            this.fibonacci.Size = new System.Drawing.Size(38, 31);
             this.fibonacci.TabIndex = 9;
             this.fibonacci.Text = "get";
             this.fibonacci.UseVisualStyleBackColor = true;
@@ -200,9 +203,10 @@
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(79, 56);
+            this.textBox7.Location = new System.Drawing.Point(51, 56);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(112, 20);
+            this.textBox7.ReadOnly = true;
+            this.textBox7.Size = new System.Drawing.Size(140, 20);
             this.textBox7.TabIndex = 8;
             // 
             // textBox6
@@ -224,8 +228,8 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.button6);
-            this.groupBox3.Controls.Add(this.button5);
+            this.groupBox3.Controls.Add(this.decompress);
+            this.groupBox3.Controls.Add(this.compress);
             this.groupBox3.Location = new System.Drawing.Point(12, 294);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 77);
@@ -233,27 +237,29 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Compression";
             // 
-            // button6
+            // decompress
             // 
-            this.button6.Location = new System.Drawing.Point(107, 28);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(84, 34);
-            this.button6.TabIndex = 6;
-            this.button6.Text = "button6";
-            this.button6.UseVisualStyleBackColor = true;
+            this.decompress.Location = new System.Drawing.Point(107, 28);
+            this.decompress.Name = "decompress";
+            this.decompress.Size = new System.Drawing.Size(84, 34);
+            this.decompress.TabIndex = 6;
+            this.decompress.Text = "Decompress";
+            this.decompress.UseVisualStyleBackColor = true;
+            this.decompress.Click += new System.EventHandler(this.decompress_Click);
             // 
-            // button5
+            // compress
             // 
-            this.button5.Location = new System.Drawing.Point(6, 28);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(79, 34);
-            this.button5.TabIndex = 5;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
+            this.compress.Location = new System.Drawing.Point(6, 28);
+            this.compress.Name = "compress";
+            this.compress.Size = new System.Drawing.Size(79, 34);
+            this.compress.TabIndex = 5;
+            this.compress.Text = "Compress";
+            this.compress.UseVisualStyleBackColor = true;
+            this.compress.Click += new System.EventHandler(this.compress_Click);
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.button7);
+            this.groupBox4.Controls.Add(this.resolve);
             this.groupBox4.Controls.Add(this.textBox9);
             this.groupBox4.Location = new System.Drawing.Point(12, 377);
             this.groupBox4.Name = "groupBox4";
@@ -262,20 +268,22 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "DNS";
             // 
-            // button7
+            // resolve
             // 
-            this.button7.Location = new System.Drawing.Point(10, 19);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
-            this.button7.TabIndex = 5;
-            this.button7.Text = "button7";
-            this.button7.UseVisualStyleBackColor = true;
+            this.resolve.Location = new System.Drawing.Point(6, 19);
+            this.resolve.Name = "resolve";
+            this.resolve.Size = new System.Drawing.Size(75, 23);
+            this.resolve.TabIndex = 5;
+            this.resolve.Text = "Resolve";
+            this.resolve.UseVisualStyleBackColor = true;
+            this.resolve.Click += new System.EventHandler(this.resolve_Click);
             // 
             // textBox9
             // 
             this.textBox9.Location = new System.Drawing.Point(7, 48);
             this.textBox9.Multiline = true;
             this.textBox9.Name = "textBox9";
+            this.textBox9.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox9.Size = new System.Drawing.Size(184, 158);
             this.textBox9.TabIndex = 3;
             // 
@@ -360,10 +368,10 @@
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button decompress;
+        private System.Windows.Forms.Button compress;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button resolve;
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button random;

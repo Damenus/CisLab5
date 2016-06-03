@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +16,17 @@ namespace CisLab5
 {
     public partial class Form1 : Form
     {
+        string[] hostNames = { "www.microsoft.com",
+            "www.apple.com", "www.google.com",
+            "www.ibm.com", "cisco.netacad.net",
+            "www.oracle.com", "www.nokia.com",
+            "www.hp.com", "www.dell.com",
+            "www.samsung.com", "www.toshiba.com",
+            "www.siemens.com", "www.amazon.com",
+            "www.sony.com", "www.canon.com", 
+            "www.acer.com", "www.motorola.com", "www.alcatel-lucent.com"
+            };
+
         public Form1()
         {
             InitializeComponent();
@@ -20,7 +34,13 @@ namespace CisLab5
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            string text = "";
+            foreach (var t in hostNames)
+            {
+               text += t;
+               text += " => \n";
+            }
+            textBox9.Text = text;
         }
 
         private void random_Click(object sender, EventArgs e)
@@ -213,7 +233,6 @@ namespace CisLab5
             progressBar.Value = 0;            
             backgroundWorker1.RunWorkerAsync(n);
         }
-
         
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {            
@@ -240,6 +259,94 @@ namespace CisLab5
         {
             textBox7.Text = e.Result.ToString();
         }
+        //zadanie3
+        public static void CompressStringToFile(string fileName, string value)
+        {
+            // A.
+            // Write string to temporary file.
+            string temp = Path.GetTempFileName();
+            File.WriteAllText(temp, value);
+
+            // B.
+            // Read file into byte array buffer.
+            byte[] b;
+            using (FileStream f = new FileStream(temp, FileMode.Open))
+            {
+                b = new byte[f.Length];
+                f.Read(b, 0, (int)f.Length);
+            }
+
+            // C.
+            // Use GZipStream to write compressed bytes to target file.
+            using (FileStream f2 = new FileStream(fileName, FileMode.Create))
+            using (GZipStream gz = new GZipStream(f2, CompressionMode.Compress, false))
+            {
+                gz.Write(b, 0, b.Length);
+            }
+        }
+
+        private void compress_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDialog.ShowDialog();
+
+            // OK button was pressed.
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    
+                    string anyString = File.ReadAllText(result.ToString());
+                   
+                    CompressStringToFile("new.gz", anyString);
+                }
+                catch
+                {
+                    // Could not compress.
+                }
+
+            }
+            // Cancel button was pressed.
+            else if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+        }
+
+        private void decompress_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDialog.ShowDialog();
+
+            // OK button was pressed.
+            if (result == DialogResult.OK)
+            {
+
+
+            }
+            // Cancel button was pressed.
+            else if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+        }
+        //zadanie4
+        private void resolve_Click(object sender, EventArgs e)
+        {
+            textBox9.Text = "";
+            var d = hostNames.AsParallel()
+                .Select(host => new { Name = host, Ip = Dns.GetHostAddresses(host) })
+                .Select(host => new { name = host.Name + " => " + host.Ip.First().ToString() });
+                //.ForAll(host => textBox9.Text += (host.Name + " => " + host.Ip.First().ToString() + "\n"));
+                //.ForAll(host => Console.WriteLine(host.Name + " => " + host.Ip.First().ToString()));
+
+            foreach(var f in d)
+            {
+                textBox9.Text += (f.name + "\t");                
+            }
+
+        }
+       
 
         
     }
