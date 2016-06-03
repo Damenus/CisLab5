@@ -54,6 +54,7 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.random = new System.Windows.Forms.Button();
             this.textBox8 = new System.Windows.Forms.TextBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -306,6 +307,13 @@
             this.textBox8.Size = new System.Drawing.Size(84, 20);
             this.textBox8.TabIndex = 9;
             // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerReportsProgress = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -360,6 +368,7 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button random;
         private System.Windows.Forms.TextBox textBox8;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

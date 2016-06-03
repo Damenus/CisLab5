@@ -22,6 +22,12 @@ namespace CisLab5
         {
 
         }
+
+        private void random_Click(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            textBox8.Text = rnd.Next().ToString();
+        }
         // zadanie1.a task
         private void tasks_Click(object sender, EventArgs e)
         {
@@ -197,19 +203,42 @@ namespace CisLab5
            await finalTask(n,k);
           
         }
-        //zadanie2
+        //zadanie2        
         private void fibonacci_Click(object sender, EventArgs e)
         {
             int n = Int32.Parse(textBox6.Text);
 
-
-
+            progressBar.Maximum = 100;
+            progressBar.Step = 1;
+            progressBar.Value = 0;            
+            backgroundWorker1.RunWorkerAsync(n);
         }
 
-        private void random_Click(object sender, EventArgs e)
+        
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {            
+            int totalSteps = (int)e.Argument;
+            long a = 0, b = 1;
+
+            for (int j = 1; j <= totalSteps; j++)
+            {              
+                b += a; //pod zmienną b przypisujemy wyraz następny czyli a+b
+                a = b - a; //pod zmienną a przypisujemy wartość zmiennej b
+                Thread.Sleep(100);
+                (sender as BackgroundWorker).ReportProgress((int)(100 / totalSteps) * j, null);                
+            }
+
+            e.Result = a;
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Random rnd = new Random();
-            textBox8.Text = rnd.Next().ToString();
+            progressBar.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            textBox7.Text = e.Result.ToString();
         }
 
         
