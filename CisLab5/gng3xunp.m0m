@@ -122,19 +122,17 @@ namespace CisLab5
             MethodAsyncIntDelegat b = new MethodAsyncIntDelegat(methodB);
             IAsyncResult metB = b.BeginInvoke(n, k, null, null);
 
-            Thread.Sleep(10000);
+            Thread.Sleep(10);
 
             int resultA = a.EndInvoke(metA);
             int resultB = b.EndInvoke(metB);
 
-            double result = resultA / resultB;
-
-            if (textBox4.InvokeRequired)
+            if (textBox3.InvokeRequired)
             {
-                textBox4.BeginInvoke((Action)(() => textBox4.Text = result.ToString()));
+                textBox3.BeginInvoke((Action)(() => textBox3.Text = resultA.Result.ToString()));
             }
 
-            return result;
+            return resultA / resultB;
             
         }
 
@@ -197,21 +195,11 @@ namespace CisLab5
            await finalTask(n,k);
           
         }
-        //zadanie2
-        private void fibonacci_Click(object sender, EventArgs e)
-        {
-            int n = Int32.Parse(textBox6.Text);
-
-
-
-        }
 
         private void random_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
             textBox8.Text = rnd.Next().ToString();
         }
-
-        
     }
 }

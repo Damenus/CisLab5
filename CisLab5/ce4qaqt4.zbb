@@ -22,7 +22,7 @@ namespace CisLab5
         {
 
         }
-        // zadanie1.a task
+
         private void tasks_Click(object sender, EventArgs e)
         {
             int n = Int32.Parse(textBox1.Text);
@@ -86,70 +86,12 @@ namespace CisLab5
            
 
         }
-        // zadanie1.b delegaci
-        private delegate double MethodAsyncDelegat(int n, int k);
-        private delegate int MethodAsyncIntDelegat(int n, int k);
-
-        private int methodA(int n, int k)
-        {
-            int licznik = 1;
-            int warunek = n - k + 1;
-
-            for (int i = n; i >= warunek; i--)
-            {
-                licznik = licznik * i;
-            }
-
-            return licznik;
-        }
-
-        private int methodB(int n, int k)
-        {
-            int mianownik = 1;
-
-            for (int i = 1; i <= k; i++)
-            {
-                mianownik = mianownik * i;
-            }
-
-            return mianownik;
-        }
-
-        private double MethodAsync(int n, int k)
-        {
-            MethodAsyncIntDelegat a = new MethodAsyncIntDelegat(methodA);
-            IAsyncResult metA = a.BeginInvoke(n, k, null, null);
-            MethodAsyncIntDelegat b = new MethodAsyncIntDelegat(methodB);
-            IAsyncResult metB = b.BeginInvoke(n, k, null, null);
-
-            Thread.Sleep(10000);
-
-            int resultA = a.EndInvoke(metA);
-            int resultB = b.EndInvoke(metB);
-
-            double result = resultA / resultB;
-
-            if (textBox4.InvokeRequired)
-            {
-                textBox4.BeginInvoke((Action)(() => textBox4.Text = result.ToString()));
-            }
-
-            return result;
-            
-        }
 
         private void Delegates_Click(object sender, EventArgs e)
         {
-            int n = Int32.Parse(textBox1.Text);
-            int k = Int32.Parse(textBox2.Text);
-
-            MethodAsyncDelegat d = new MethodAsyncDelegat(MethodAsync);
-            IAsyncResult rezult = d.BeginInvoke(n, k, null, null);
-            //double result = d.EndInvoke(rezult);
-            //textBox4.Text = result.ToString();
-
+            
         }
-        // zadanie1.c async
+
         async Task<int> taskA(int n, int k)
         {
             int licznik = 1;
@@ -163,6 +105,7 @@ namespace CisLab5
             return licznik;
         }
 
+
         async Task<int> taskB(int n, int k)
         {
             int mianownik = 1;
@@ -175,18 +118,19 @@ namespace CisLab5
             return mianownik;
         }
 
-        async Task finalTask(int n, int k)
+        async Task<double> finalTask()
         {
+
             double wynik = 10;
-            int licznik = await taskA(n, k);
-            int mianownik= await taskB(n, k);
-
             await Task.Delay(10000);
-            await Task.Run(() => Thread.Sleep(3000));
+            if (textBox3.InvokeRequired)
+            {
+                textBox3.BeginInvoke((Action)(() => textBox3.Text = wynik.ToString()));
+            }
+            textBox5.Text = result.ToString();
+            return wynik;
 
-            wynik = licznik / mianownik;
-            textBox5.Text = wynik.ToString();
-          
+
         }
                          
         private async void async_Click(object sender, EventArgs e)
@@ -194,24 +138,10 @@ namespace CisLab5
             int n = Int32.Parse(textBox1.Text);
             int k = Int32.Parse(textBox2.Text);
 
-           await finalTask(n,k);
-          
-        }
-        //zadanie2
-        private void fibonacci_Click(object sender, EventArgs e)
-        {
-            int n = Int32.Parse(textBox6.Text);
-
-
+           await finalTask();
+           // textBox5.Text = result.ToString();
+           
 
         }
-
-        private void random_Click(object sender, EventArgs e)
-        {
-            Random rnd = new Random();
-            textBox8.Text = rnd.Next().ToString();
-        }
-
-        
     }
 }

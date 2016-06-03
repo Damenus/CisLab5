@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace CisLab5
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tasks_Click(object sender, EventArgs e)
+        {
+            int n = Int32.Parse(textBox1.Text);
+            int k = Int32.Parse(textBox2.Text);
+
+            Task<double> mainTask = Task.Run(
+                () =>
+                {
+                    Task<int> taskA = Task.Run(
+                        () =>
+                        {
+                            int licznik = 1;
+                            int warunek = n - k + 1;
+
+                            for (int i = n; i >= warunek; i--)
+                            {
+                                licznik = licznik * i;
+                            }
+
+
+                            return licznik;
+                        }
+                    );
+
+                    Task<int> taskB = Task.Run(
+                        () =>
+                        {
+                            int mianownik = 1;
+
+                            for (int i = 1; i <= k; i++)
+                            {
+                                mianownik = mianownik * i;
+                            }
+
+                            return mianownik;
+                        }
+                    );
+
+                    Task<int>[] work = new Task<int>[] { taskA, taskB };
+
+                    Task<double> finalTask = Task.Factory.ContinueWhenAll(work,
+                        (tasks) =>
+                        {
+                            Task<int>[] task = (Task<int>[])tasks;
+                            double wynik = task[0].Result / task[1].Result;
+                            
+                            return wynik;
+                        }
+                    );
+                    Thread.Sleep(10000);
+                    finalTask.Wait();
+                    return finalTask.Result;
+                }
+                
+            );
+            textBox3.Text = mainTask.Result.ToString();
+
+        }
+    }
+}
